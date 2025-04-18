@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Set up JDK 17 for Android builds
+      # Set up JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -30,7 +30,7 @@ jobs:
 
       # Accept Android SDK licenses
       - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses
+        run: yes | sdkmanager --licenses || true
 
       # Make Gradle wrapper executable
       - name: Make Gradle executable
@@ -40,7 +40,7 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleDebug
 
-      # Upload the generated APK as an artifact
+      # Upload the generated APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
