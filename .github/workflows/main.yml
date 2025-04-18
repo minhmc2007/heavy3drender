@@ -1,0 +1,48 @@
+name: Build App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Set up JDK 17 for Android builds
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Set up Android SDK
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 'latest'
+          sdk-packages: |
+            platforms;android-34
+            build-tools;34.0.0
+
+      # Accept Android SDK licenses
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+
+      # Make Gradle wrapper executable
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      # Build the debug APK
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      # Upload the generated APK as an artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BlueHunter-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
